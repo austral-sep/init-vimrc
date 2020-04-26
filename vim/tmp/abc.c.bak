@@ -1,0 +1,63 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<unistd.h>
+#include<sys/sem.h>
+#include<sys/ipc.h>
+
+int main()
+{
+	pid_t pid;
+/*	key_t key = ftok("/tmp/sem1",'k');
+	int semid = semget(key,3 0644 | IPC_CREAT);
+	if(semid<0)
+	{
+		perror("semget");
+		exit(1);
+	}
+	semctl(semid,0,SETVAL,1);
+	semctl(semid,1,SETVAL,0);
+	semctl(semid,2,SETVAL,0);*/
+	pid = fork();
+	if(pid<0)
+	{
+		perror("pid1");
+		exit(1);
+	}
+	if(pid==0)
+	{
+		pid = fork();
+		if(pid<0)
+		{
+			perror("pid2");
+			exit(1);
+		}
+		if(pid==0)
+		{
+			while(1)
+			{
+				sleep(1);
+				printf("C");
+				sleep(1);
+			}
+		}
+
+		if(pid>0)
+		{
+			while(1)
+			{
+				sleep(1);
+				printf("b");
+				sleep(1);
+			}
+		}
+	}
+	if(pid>0)
+	{
+		while(1)
+		{
+			sleep(1);
+			printf("a");
+			sleep(1);
+		}
+	}
+}

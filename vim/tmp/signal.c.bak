@@ -1,0 +1,15 @@
+#include<stdio.h>
+#include<signal.h>
+#include<unistd.h>
+void signal_print(int sign){
+	if(sign == SIGINT)
+		printf("hello world\n");
+	sleep(1);
+}
+int main()
+{
+	signal(SIGINT,SIG_IGN);
+	while(1)
+	signal(SIGINT,signal_print);
+	return 0;
+}

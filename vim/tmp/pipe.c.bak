@@ -1,0 +1,34 @@
+#include<unistd.h>
+#include<stdio.h>
+#include<string.h>
+#include<sys/types.h>
+void main()
+{
+	int fildes[2];
+	int i,j;
+	pid_t pid;
+	char buf[256];
+	if(pipe(fildes)<0)
+	{
+		fprintf(stderr,"pipe error!/n");
+		return ;
+	}
+	if((pid = fork())<0)
+	{
+		printf("fork error!/n");
+		return ;
+	}
+	if(pid == 0)
+	{
+		close(fildes[0]);
+		memset(buf,0,sizeof(buf));
+		j = read(fildes[0],buf,sizeof(buf));
+		fprintf(stderr,"[child] buf =[%s] len [%d] /n",buf,j);
+		return ;
+	}
+	close(fildes[0]);
+	write(fildes[1],"Hello!",strlen("Hello!"));
+	write(fildes[1],"World!",strlen("World!"));
+}
+
+
