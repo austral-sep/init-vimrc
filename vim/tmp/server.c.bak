@@ -1,0 +1,84 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#include<sys/types.h>
+#include<sys/socket.h>
+#include<arpa/inet.h>
+#include<unistd.h>
+#include<sys/stat.h>
+#include<fcntl.h>
+
+#define PORT 33333
+
+int main()
+{
+	int sockfd;
+	struct sockaddr_in addr;
+	int len = sizeof(struct sockaddr_in);
+	sockfd = socket(AF_INET, SOCK_STREAM, 0);
+	if(sockfd == -1)
+	{
+		perror("socket\n");
+		exit(1);
+	}
+	printf("server socket success!\n");
+	
+	int opt = 1;
+	setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
+	
+	bzero(&addr, sizeof(struct sockaddr_in));
+	addr.sin_family = AF_INET;
+	addr.sin_port = htons(PORT);
+	addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+
+	if(bind(sockfd, (struct sockaddr *)&addr, len)<0)
+	{
+		perror("bind\n");
+		exit(1);
+	}
+
+	if(listen(sockfd, 3) < 0)
+	{
+		perror("listen\n");
+		exit(1);
+	}
+
+printf("server bind success!\n");
+	
+	while(1)
+	{
+		struct sockaddr_in c_addr;
+		bzero(&c_addr, sizeof(struct sockaddr_in));
+		printf("accepting.....!\n");
+		int cfd;
+		cfd = accept(sockfd, (struct sockaddr *)&c_addr, &len);
+		if(cfd == -1)
+		{
+			perror("accept\n");
+			exit(1);
+		}
+
+		printf("ip = %s\n",inet_ntoa(c_addr.sin_addr));
+
+		char name[1024];
+		read(cfd, name, sizeof(name));
+		int fp;
+		fp = open(name, O_CREAT | O_RDWR, 0655);
+		char a[1024];
+		memset(a, 0, sizeof(a));
+		while(1)
+		{
+			read(cfd, a, sizeof(a));
+			if(a=="end")
+			{
+				printf("fp success\n");
+				exit(0);
+			}
+			else
+				write(fp, a, strlen(a));
+		}
+		close(fp);
+	}
+	return 0;
+}
+

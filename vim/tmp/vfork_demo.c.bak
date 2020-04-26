@@ -1,0 +1,13 @@
+#include<sys/types.h>
+#include<unistd.h>
+#include<stdio.h>
+
+int main()
+{
+	pid_t pid;
+	int count = 1;
+	pid = vfork();
+	count++;
+	printf("count = %d\n",count);// count 2 \ -123123
+	exit(1);
+}

@@ -1,0 +1,28 @@
+#include <iostream>
+
+using namespace std;
+
+//register int num = 5;
+
+// register int func()
+// {
+
+// }
+
+int main()
+{
+    register int num = 5;
+
+    int *p = &num;  //C++对register的升级：当用＆获取寄存器变量的地址时，它会将该变量重现加载到内存中
+
+    //volatile:防止编译器将所修饰的变量加载到寄存器中进行优化
+
+    volatile int count = 5;
+
+    while(count == 5)
+    {
+        cout << "hello world" << endl;
+    }
+    
+    return 0;
+}

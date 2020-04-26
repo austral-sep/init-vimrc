@@ -1,0 +1,2 @@
+#include<stdin.h>
+void bubblesort(int s[], int n);
